@@ -17,6 +17,8 @@
   <textarea id="contents" placeholder="Enter contents..."></textarea>
   <button id="generate">Generate QR</button>
   <canvas id="qrCanvas"></canvas>
+  <div id="idLabel"></div>
+
   <script type="module">
     import { encryptText } from './js/crypto.js';
 
@@ -29,13 +31,21 @@
       const payload = JSON.stringify({ id, ciphertext });
       const canvas = document.getElementById("qrCanvas");
 
-      QRCode.toCanvas(canvas, payload, { width: 300 });
+      QRCode.toCanvas(canvas, payload, { width: 300 }, function (error) {
+        if (error) return alert("Error generating QR");
 
-      // Download as PNG
-      const link = document.createElement("a");
-      link.download = `QR_${id}.png`;
-      link.href = canvas.toDataURL("image/png");
-      link.click();
+        // Show Container ID
+        let idText = document.getElementById("idLabel");
+        idText.innerText = `Container ID: ${id}`;
+        idText.style.fontSize = "24px";
+        idText.style.marginTop = "10px";
+
+        // Download
+        const link = document.createElement("a");
+        link.download = `QR_${id}.png`;
+        link.href = canvas.toDataURL("image/png");
+        link.click();
+      });
     };
   </script>
 </body>
