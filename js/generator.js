@@ -17,24 +17,31 @@ document.getElementById('generate').addEventListener('click', async () => {
   }
 
   try {
+    // Step 1: Encrypt contents
     const ciphertext = await encryptText(contents);
-    const data = JSON.stringify({ id, ciphertext });
-    const encoded = toUrlSafeBase64(data);
-    const qrUrl = `${location.origin}${location.pathname.replace('index.html', 'view.html')}#${encoded}`;
 
+    // Step 2: Create object and encode
+    const jsonPayload = JSON.stringify({ id, ciphertext });
+    const encoded = toUrlSafeBase64(jsonPayload);
+
+    // Step 3: Form URL for view.html
+    const qrUrl = `${location.origin}${location.pathname.replace('index.html', 'view.html')}#${encoded}`;
+    console.log("QR will contain:", qrUrl); // For debug
+
+    // Step 4: Generate QR to canvas
     const canvas = document.getElementById('qr');
     await QRCode.toCanvas(canvas, qrUrl, {
       width: 300,
       errorCorrectionLevel: 'H'
     });
 
-    // Download automatically
+    // Step 5: Auto-download QR
     const link = document.createElement('a');
     link.download = `${id}.png`;
     link.href = canvas.toDataURL("image/png");
     link.click();
 
-    // Show label
+    // Step 6: Show label
     document.getElementById('label').innerText = `Container ID: ${id}`;
   } catch (err) {
     console.error("Encryption or QR generation failed:", err);
