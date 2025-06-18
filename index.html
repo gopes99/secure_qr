@@ -2,12 +2,11 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <title>QR Generator</title>
+  <title>QR Generator - Test</title>
   <script src="https://cdn.jsdelivr.net/npm/qrcode/build/qrcode.min.js"></script>
-  <script type="module" src="js/crypto.js"></script>
   <style>
     body { font-family: sans-serif; text-align: center; padding: 20px; }
-    input, textarea { width: 80%; margin: 10px auto; font-size: 18px; }
+    input, textarea { width: 80%; margin: 10px auto; font-size: 18px; display: block; }
     canvas { margin: 20px auto; display: block; }
   </style>
 </head>
@@ -19,28 +18,20 @@
   <canvas id="qrCanvas"></canvas>
   <div id="idLabel"></div>
 
-  <script type="module">
-    import { encryptText } from './js/crypto.js';
-
+  <script>
     document.getElementById("generate").onclick = async () => {
       const id = document.getElementById("containerId").value.trim();
       const contents = document.getElementById("contents").value.trim();
       if (!id || !contents) return alert("Both fields required.");
 
-      const ciphertext = await encryptText(contents);
-      const payload = JSON.stringify({ id, ciphertext });
-      const canvas = document.getElementById("qrCanvas");
+      const payload = JSON.stringify({ id, ciphertext: contents }); // no encryption in this test
 
+      const canvas = document.getElementById("qrCanvas");
       QRCode.toCanvas(canvas, payload, { width: 300 }, function (error) {
         if (error) return alert("Error generating QR");
 
-        // Show Container ID
-        let idText = document.getElementById("idLabel");
-        idText.innerText = `Container ID: ${id}`;
-        idText.style.fontSize = "24px";
-        idText.style.marginTop = "10px";
+        document.getElementById("idLabel").innerText = `Container ID: ${id}`;
 
-        // Download
         const link = document.createElement("a");
         link.download = `QR_${id}.png`;
         link.href = canvas.toDataURL("image/png");
