@@ -2,8 +2,9 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <title>QR Generator - Test</title>
+  <title>QR Generator</title>
   <script src="https://cdn.jsdelivr.net/npm/qrcode/build/qrcode.min.js"></script>
+  <script type="module" src="js/crypto.js"></script>
   <style>
     body { font-family: sans-serif; text-align: center; padding: 20px; }
     input, textarea { width: 80%; margin: 10px auto; font-size: 18px; display: block; }
@@ -18,29 +19,31 @@
   <canvas id="qrCanvas"></canvas>
   <div id="idLabel"></div>
 
-<script>
-document.addEventListener("DOMContentLoaded", () => {
-  document.getElementById("generate").onclick = () => {
-    const id = document.getElementById("containerId").value.trim();
-    const contents = document.getElementById("contents").value.trim();
-    if (!id || !contents) return alert("Both fields required.");
+  <script type="module">
+    import { encryptText } from './js/crypto.js';
 
-    const payload = JSON.stringify({ id, ciphertext: contents });
+    document.addEventListener("DOMContentLoaded", () => {
+      document.getElementById("generate").onclick = async () => {
+        const id = document.getElementById("containerId").value.trim();
+        const contents = document.getElementById("contents").value.trim();
+        if (!id || !contents) return alert("Both fields required.");
 
-    const canvas = document.getElementById("qrCanvas");
-    QRCode.toCanvas(canvas, payload, { width: 300 }, function (error) {
-      if (error) return alert("Error generating QR");
+        const ciphertext = await encryptText(contents);
+        const payload = JSON.stringify({ id, ciphertext });
 
-      document.getElementById("idLabel").innerText = `Container ID: ${id}`;
+        const canvas = document.getElementById("qrCanvas");
+        QRCode.toCanvas(canvas, payload, { width: 300 }, function (error) {
+          if (error) return alert("Error generating QR");
 
-      const link = document.createElement("a");
-      link.download = `QR_${id}.png`;
-      link.href = canvas.toDataURL("image/png");
-      link.click();
+          document.getElementById("idLabel").innerText = `Container ID: ${id}`;
+
+          const link = document.createElement("a");
+          link.download = `QR_${id}.png`;
+          link.href = canvas.toDataURL("image/png");
+          link.click();
+        });
+      };
     });
-  };
-});
-</script>
-
+  </script>
 </body>
 </html>
