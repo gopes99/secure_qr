@@ -2,50 +2,41 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <title>QR Generator</title>
+  <title>Generate QR Code</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <script type="module" src="js/generator.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/qrcode/build/qrcode.min.js"></script>
-  <script type="module" src="js/crypto.js"></script>
   <style>
-    body { font-family: sans-serif; text-align: center; padding: 20px; }
-    input, textarea { width: 80%; margin: 10px auto; font-size: 18px; display: block; }
-    canvas { margin: 20px auto; display: block; }
+    body {
+      font-family: sans-serif;
+      padding: 40px 20px;
+      font-size: 18px;
+      text-align: center;
+    }
+    input, textarea {
+      width: 90%;
+      max-width: 500px;
+      padding: 10px;
+      margin: 10px auto;
+      font-size: 16px;
+    }
+    canvas {
+      margin-top: 30px;
+    }
+    #label {
+      margin-top: 10px;
+      font-weight: bold;
+    }
   </style>
 </head>
 <body>
   <h1>QR Generator</h1>
-  <input id="containerId" placeholder="Container ID" />
-  <textarea id="contents" placeholder="Enter contents..."></textarea>
+  <input type="text" id="container_id" placeholder="Container ID" />
+  <textarea id="contents" rows="4" placeholder="Contents"></textarea>
+  <br />
   <button id="generate">Generate QR</button>
-  <canvas id="qrCanvas"></canvas>
-  <div id="idLabel"></div>
-
-  <script type="module">
-    import { encryptText } from './js/crypto.js';
-
-    document.addEventListener("DOMContentLoaded", () => {
-      document.getElementById("generate").onclick = async () => {
-        const id = document.getElementById("containerId").value.trim();
-        const contents = document.getElementById("contents").value.trim();
-        if (!id || !contents) return alert("Both fields required.");
-
-        const ciphertext = await encryptText(contents);
-        const payload = btoa(JSON.stringify({ id, ciphertext }));
-        const qrUrl = `${location.origin}${location.pathname.replace('index.html', 'view.html')}#${payload}`;
-
-
-        const canvas = document.getElementById("qrCanvas");
-        QRCode.toCanvas(canvas, payload, { width: 300 }, function (error) {
-          if (error) return alert("Error generating QR");
-
-          document.getElementById("idLabel").innerText = `Container ID: ${id}`;
-
-          const link = document.createElement("a");
-          link.download = `QR_${id}.png`;
-          link.href = canvas.toDataURL("image/png");
-          link.click();
-        });
-      };
-    });
-  </script>
+  <br />
+  <canvas id="qr"></canvas>
+  <div id="label"></div>
 </body>
 </html>
