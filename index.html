@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>QR Generator</title>
+  <script src="https://cdn.jsdelivr.net/npm/qrcode/build/qrcode.min.js"></script>
+  <script type="module" src="js/crypto.js"></script>
+  <style>
+    body { font-family: sans-serif; text-align: center; padding: 20px; }
+    input, textarea { width: 80%; margin: 10px auto; font-size: 18px; }
+    canvas { margin: 20px auto; display: block; }
+  </style>
+</head>
+<body>
+  <h1>QR Generator</h1>
+  <input id="containerId" placeholder="Container ID" />
+  <textarea id="contents" placeholder="Enter contents..."></textarea>
+  <button id="generate">Generate QR</button>
+  <canvas id="qrCanvas"></canvas>
+  <script type="module">
+    import { encryptText } from './js/crypto.js';
+
+    document.getElementById("generate").onclick = async () => {
+      const id = document.getElementById("containerId").value.trim();
+      const contents = document.getElementById("contents").value.trim();
+      if (!id || !contents) return alert("Both fields required.");
+
+      const ciphertext = await encryptText(contents);
+      const payload = JSON.stringify({ id, ciphertext });
+      const canvas = document.getElementById("qrCanvas");
+
+      QRCode.toCanvas(canvas, payload, { width: 300 });
+
+      const link = document.createElement("a");
+      link.download = `QR_${id}.png`;
+      link.href = canvas.toDataURL("image/png");
+      link.click();
+    };
+  </script>
+</body>
+</html>

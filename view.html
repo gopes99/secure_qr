@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>QR Viewer</title>
+  <script type="module" src="js/view.js"></script>
+  <style>
+    body { font-family: sans-serif; text-align: center; padding: 20px; }
+    textarea { width: 80%; font-size: 18px; margin-top: 20px; height: 100px; }
+  </style>
+</head>
+<body>
+  <h1>Scan QR</h1>
+  <input type="file" id="qrFile" accept="image/*" />
+  <textarea id="output" readonly placeholder="Decrypted contents appear here..."></textarea>
+</body>
+</html>
