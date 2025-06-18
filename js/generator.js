@@ -25,7 +25,9 @@ document.getElementById('generate').addEventListener('click', async () => {
     const encoded = toUrlSafeBase64(jsonPayload);
 
     // Step 3: Form URL for view.html
-    const qrUrl = `${location.origin}${location.pathname.replace('index.html', 'view.html')}#${encoded}`;
+  const basePath = location.pathname.endsWith('index.html') || location.pathname.endsWith('/') ? location.pathname.replace(/index\.html$/, '').replace(/\/$/, '') : location.pathname;
+
+const qrUrl = `${location.origin}${basePath}/view.html#${encoded}`;
     console.log("QR will contain:", qrUrl); // For debug
 
     // Step 4: Generate QR to canvas
