@@ -18,26 +18,29 @@
   <canvas id="qrCanvas"></canvas>
   <div id="idLabel"></div>
 
-  <script>
-    document.getElementById("generate").onclick = async () => {
-      const id = document.getElementById("containerId").value.trim();
-      const contents = document.getElementById("contents").value.trim();
-      if (!id || !contents) return alert("Both fields required.");
+<script>
+document.addEventListener("DOMContentLoaded", () => {
+  document.getElementById("generate").onclick = () => {
+    const id = document.getElementById("containerId").value.trim();
+    const contents = document.getElementById("contents").value.trim();
+    if (!id || !contents) return alert("Both fields required.");
 
-      const payload = JSON.stringify({ id, ciphertext: contents }); // no encryption in this test
+    const payload = JSON.stringify({ id, ciphertext: contents });
 
-      const canvas = document.getElementById("qrCanvas");
-      QRCode.toCanvas(canvas, payload, { width: 300 }, function (error) {
-        if (error) return alert("Error generating QR");
+    const canvas = document.getElementById("qrCanvas");
+    QRCode.toCanvas(canvas, payload, { width: 300 }, function (error) {
+      if (error) return alert("Error generating QR");
 
-        document.getElementById("idLabel").innerText = `Container ID: ${id}`;
+      document.getElementById("idLabel").innerText = `Container ID: ${id}`;
 
-        const link = document.createElement("a");
-        link.download = `QR_${id}.png`;
-        link.href = canvas.toDataURL("image/png");
-        link.click();
-      });
-    };
-  </script>
+      const link = document.createElement("a");
+      link.download = `QR_${id}.png`;
+      link.href = canvas.toDataURL("image/png");
+      link.click();
+    });
+  };
+});
+</script>
+
 </body>
 </html>
