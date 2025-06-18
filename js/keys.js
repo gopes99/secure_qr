@@ -6,7 +6,7 @@ export const allowedCredentials = [
   }
   {
     type: "public-key",
-    id: Uint8Array.from(atob("ZSkSHyjChJjbcocjzm4JladkX1U"), c => c.charCodeAt(0)),
+    id: Uint8Array.from(atob("ZSkSHyjChJjbcocjzm4JladkX1U="), c => c.charCodeAt(0)),
     transports: ["internal"]
   }
    
