@@ -29,7 +29,9 @@
         if (!id || !contents) return alert("Both fields required.");
 
         const ciphertext = await encryptText(contents);
-        const payload = JSON.stringify({ id, ciphertext });
+        const payload = btoa(JSON.stringify({ id, ciphertext }));
+        const qrUrl = `${location.origin}${location.pathname.replace('index.html', 'view.html')}#${payload}`;
+
 
         const canvas = document.getElementById("qrCanvas");
         QRCode.toCanvas(canvas, payload, { width: 300 }, function (error) {
