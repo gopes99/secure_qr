@@ -1,17 +1,38 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <title>Register Device</title>
-  <script type="module">
-    import { register } from './js/webauthn.js';
-    register().then(credId => {
-      alert("Credential ID:\n\n" + credId + "\n\nAdd this to js/keys.js allowlist.");
-    });
-  </script>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Register Credential</title>
+  <style>
+    body {
+      font-family: sans-serif;
+      max-width: 600px;
+      margin: 2rem auto;
+      padding: 1rem;
+      text-align: center;
+    }
+    code {
+      word-break: break-all;
+      background: #f0f0f0;
+      padding: 0.5rem;
+      display: block;
+      margin-top: 1rem;
+    }
+    button {
+      font-size: 1.2rem;
+      padding: 0.7rem 1.2rem;
+    }
+  </style>
 </head>
 <body>
-  <h1>Register Face ID Credential</h1>
-  <p>This device will be able to view encrypted QR content after this step.</p>
+  <h2>Register Face ID Credential</h2>
+  <p>Click below to register a new credential on this device.</p>
+  <button id="register">Register</button>
+
+  <h3>Credential ID:</h3>
+  <code id="output">—</code>
+
+  <script type="module" src="js/register.js"></script>
 </body>
 </html>
