@@ -1,4 +1,7 @@
-// Add credential IDs (Base64) from register.html
-export const allowedCredentialIDs = [
-  "BASE64_ENCODED_CREDENTIAL_ID_1"
+export const allowedCredentials = [
+  {
+    type: "public-key",
+    id: Uint8Array.from(atob("BASE64ENCODEDCREDENTIALID"), c => c.charCodeAt(0)),
+    transports: ["internal"]
+  }
 ];
