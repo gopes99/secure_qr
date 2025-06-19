@@ -1,36 +1,61 @@
+import { userCredentials } from './keys.js';
 import { decryptText } from './crypto.js';
-import { allowedCredentials } from './keys.js';
 
-async function authenticate() {
-  const cred = await navigator.credentials.get({
-    publicKey: {
-      challenge: new Uint8Array([1, 2, 3, 4]),
-      allowCredentials: allowedCredentials,
-      timeout: 60000,
-      userVerification: "required"
-    }
-  });
-  return !!cred;
+function fromUrlSafeBase64(str) {
+  str = str.replace(/-/g, '+').replace(/_/g, '/');
+  while (str.length % 4 !== 0) str += '=';
+  return atob(str);
 }
 
-async function start() {
-  const hash = location.hash.slice(1);
-  if (!hash) {
-    document.getElementById("result").innerText = "No data in URL.";
-    return;
-  }
+function toUint8Array(base64Str) {
+  const binary = atob(base64Str);
+  return Uint8Array.from([...binary].map(c => c.charCodeAt(0)));
+}
+
+const hash = location.hash.substring(1);
+if (!hash) {
+  document.getElementById('result').textContent = "No QR payload found.";
+  document.getElementById('proceed').disabled = true;
+}
+
+// Populate dropdown
+const dropdown = document.getElementById('userSelect');
+Object.keys(userCredentials).forEach(username => {
+  const opt = document.createElement("option");
+  opt.value = username;
+  opt.textContent = username;
+  dropdown.appendChild(opt);
+});
+
+document.getElementById('proceed').addEventListener('click', async () => {
+  const username = dropdown.value;
+  const base64id = userCredentials[username];
+  const allowCredential = {
+    type: "public-key",
+    id: toUint8Array(base64id),
+    transports: ["internal"]
+  };
+
+  const challenge = new Uint8Array(32);
+  crypto.getRandomValues(challenge);
 
   try {
-    const payload = JSON.parse(atob(hash));
-    const authOK = await authenticate();
-    if (!authOK) throw new Error("Authentication failed");
+    const assertion = await navigator.credentials.get({
+      publicKey: {
+        challenge,
+        allowCredentials: [allowCredential],
+        userVerification: "required",
+        timeout: 60000
+      }
+    });
 
-    const plaintext = await decryptText(payload.ciphertext);
-    document.getElementById("result").innerText =
-      `Container ID: ${payload.id}\nContents: ${plaintext}`;
+    // Auth success, now decode payload
+    const json = JSON.parse(fromUrlSafeBase64(hash));
+    const decrypted = await decryptText(json.ciphertext);
+    document.getElementById('result').textContent =
+      `✅ Container ID: ${json.id}\n📦 Contents: ${decrypted}`;
   } catch (err) {
-    document.getElementById("result").innerText = "Error: " + err.message;
+    alert("Face ID failed or canceled. Returning to user select.");
+    location.reload();
   }
-}
-
-document.addEventListener("DOMContentLoaded", start);
+});
