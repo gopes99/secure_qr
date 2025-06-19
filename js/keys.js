@@ -1,13 +1,5 @@
-export const allowedCredentials = [
-  {
-    type: "public-key",
-    id: Uint8Array.from(atob("i4lWVV6ph2bsAe7OWhoPuNIPujY="), c => c.charCodeAt(0)),
-    transports: ["internal"]
-  }
-  {
-    type: "public-key",
-    id: Uint8Array.from(atob("ZSkSHyjChJjbcocjzm4JladkX1U="), c => c.charCodeAt(0)),
-    transports: ["internal"]
-  }
-   
-];
+export const userCredentials = {
+  "Gopes": "i4lWVV6ph2bsAe7OWhoPuNIPujY=",
+  "Punu":   "0ROJC+nos+nvygnz9y6YTHEeyQw="
+};
+
